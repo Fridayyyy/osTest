@@ -33,6 +33,7 @@ int main(int argc,char *argv[]){
 
     pid_t fpid;
     task_t computeTask,ioTask;
+
     task_t *currTask=&computeTask;
 
     computeTask.taskType=COMPUTE_TASK;

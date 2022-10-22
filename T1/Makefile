@@ -4,7 +4,7 @@ OBJS = ComputeTask.o IOTask.o mainProg.o
 TARGET = mainProg
 
 $(TARGET): $(OBJS)
-$(CC) -o $(TARGET) $(OBJS) $(CFLAGS)
+	$(CC) -o $(TARGET) $(OBJS) $(CFLAGS)
 
 clean:
 	rm  -rf  *.o  $(TARGET)
