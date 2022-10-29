@@ -12,4 +12,5 @@ void *write(void * arg) {
     std::cout<<"writer:"<<rw->i<<" is writing,num is:"<<rw->num<<std::endl;
     sleep(1);
     semSignal(&rw->wMutex);
+    return (void *)NULL;
 }

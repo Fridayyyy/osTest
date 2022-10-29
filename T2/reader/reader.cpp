@@ -25,4 +25,5 @@ void* read(void* arg) {
         sem_post(&rw->wMutex);
     }
     sem_post(&rw->rMutex);
+    return (void *)NULL;
 }
