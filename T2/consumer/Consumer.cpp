@@ -9,6 +9,8 @@
 #include "ProducerConsumerUtilities.h"
 
 
+
+
 void getProduct(ProducerConsumerManager_t *producerConsumerManager,int threadIdx){
     sem_t *mutex=&(producerConsumerManager->mutex);
     sem_t *full=&(producerConsumerManager->full);
