@@ -12,6 +12,7 @@ int main(){
     pthread_t wid[N_WRITER],rid[N_READER];
 
     for (int i = 0; i < N_READER; ++i) {
+        rw.i=i;
         pthread_create(&wid[i],NULL,write,&rw);
         pthread_create(&rid[i],NULL,read,&rw);
     }
