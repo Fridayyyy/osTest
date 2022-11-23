@@ -98,7 +98,7 @@ void file_map()
     munmap(start_addr,sb.st_size);
     close(fd);
     print_format();
-    getchar(); //used to check maps? smaps
+    getchar(); //used to check maps， smaps
 }
 
 

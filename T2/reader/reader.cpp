@@ -17,7 +17,7 @@ void* read(void* arg) {
     sem_post(&rw->rMutex);
 
     cout<<"reader:"<<rw->readCount<<" is reading,n is:"<<rw->num<<endl;
-    sleep(1);
+    sleep(2);
     sem_wait(&rw->rMutex);
 
     rw->readCount--;
