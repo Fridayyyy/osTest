@@ -1,10 +1,10 @@
-#include <fcntl.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <string.h>
+#include <sys/stat.h>
+#include<signal.h>
+#include <fcntl.h>
 
-
-#define MAX_LEN 20
+#define hist_size 1024

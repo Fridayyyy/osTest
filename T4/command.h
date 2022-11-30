@@ -6,11 +6,13 @@
 #define OSTEST_COMMAND_H
 #include "public.h"
 
-void ls();
-void cd(char **analysisOrder,int sum);
-void touch(char **analysisOrder,int sum);
-void cp(char *src,char *dst);
-void help();
-void mkdir();
+char *trim(char *string);
+void parse(char *word, char **argv);
+void execute(char **argv);
+void  execute_file(char **argv, char *output);
+
+void  execute_input(char **argv, char *output);
+void execute_pipe(char **argv, char *output);
+void execute_pipe2(char **argv, char **args, char **argp);
 
 #endif //OSTEST_COMMAND_H
