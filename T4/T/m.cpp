@@ -12,9 +12,8 @@ char *hist[hist_size];
 int f = 0;
 int head = 0, filled = 0;
 
-
-char *trim(char *string)
-{
+//获得第一个命令
+char *trim(char *string){
     int i = 0;
     int j = 0;
     char *ptr = malloc(sizeof(char*)*strlen(string));
@@ -29,8 +28,7 @@ char *trim(char *string)
     return string;
 }
 
-void parse(char *word, char **argv)
-{
+void parse(char *word, char **argv){
     int count = 0;
     memset(argv, 0, sizeof(char*)*(64));
     char *lefts = NULL;
@@ -39,8 +37,7 @@ void parse(char *word, char **argv)
     while (1)
     {
         char *p = strtok_r(word, split, &lefts);
-        if (p == NULL)
-        {
+        if (p == NULL){
             break;
         }
         argv[count] = p;
@@ -59,9 +56,8 @@ void parse(char *word, char **argv)
         f = 1;
     }
 }
-
-void execute(char **argv)
-{
+//基本命令
+void execute(char **argv){
     pid_t pid;
     int status;
 
@@ -80,10 +76,8 @@ void execute(char **argv)
     }
 }
 
-
-
-void  execute_file(char **argv, char *output)
-{
+//文件
+void  execute_file(char **argv, char *output){
     pid_t pid;
     int status, flag;
     char *file = NULL;
@@ -91,18 +85,14 @@ void  execute_file(char **argv, char *output)
     {
         printf("fork失败\n");
         exit(1);
-    }
-    else if (pid == 0)
-    {
-        if (strstr(output, ">")>0)
-        {
+    }else if (pid == 0){
+        if (strstr(output, ">")>0){
             char *p = strtok_r(output, ">", &file);
             output += 1;
             file = trim(file);
             flag = 1;
 
             int old_stdout = dup(1);
-
 
             FILE *fp1 = freopen(output, "w+", stdout);
 
@@ -111,9 +101,7 @@ void  execute_file(char **argv, char *output)
             FILE *fp2 = fdopen(old_stdout, "w");
             *stdout = *fp2;
             exit(0);
-        }
-        if (strstr(output, "<") > 0)
-        {
+        }if (strstr(output, "<") > 0){
             char *p = strtok_r(output, "<", &file);
             file = trim(file);
             flag = 1;
@@ -123,9 +111,7 @@ void  execute_file(char **argv, char *output)
                 printf("没有此文件.");
                 exit(0);
             }
-        }
-        if (strstr(output, "|")>0)
-        {
+        }if (strstr(output, "|")>0){
             fflush(stdout); printf("here"); fflush(stdout);
             char *p = strtok_r(output, "|", &file);
             file = trim(file);
@@ -152,8 +138,7 @@ void  execute_file(char **argv, char *output)
 }
 
 
-void  execute_input(char **argv, char *output)
-{
+void  execute_input(char **argv, char *output){
     pid_t pid;
     int fd;
     char *file;
@@ -196,8 +181,7 @@ void  execute_input(char **argv, char *output)
             *stdout = *fp2;
             exit(0);
         }
-        if (strstr(output, "|") > 0)
-        {
+        if (strstr(output, "|") > 0){
             char *p = strtok_r(output, "|", &file);
             file = trim(file);
             flag = 1;
@@ -227,8 +211,7 @@ void  execute_input(char **argv, char *output)
                 fd = open(output, O_RDONLY);
                 close(0);
                 dup(fd);
-                if (execvp(argv[0], argv) < 0)
-                {
+                if (execvp(argv[0], argv) < 0){
                     close(pfds[0]);
                     close(pfds[1]);
                     printf("exec错误");
@@ -237,23 +220,18 @@ void  execute_input(char **argv, char *output)
                 }
                 close(fd);
                 exit(0);
-            }
-            else if (pid2 == 0 && pid != 0 && fl != 1)
-            {
+            }else if (pid2 == 0 && pid != 0 && fl != 1){
                 close(0);
                 dup(pfds[0]);
                 close(pfds[1]);
                 close(pfds[0]);
-                if (execvp(args[0], args) < 0)
-                {
+                if (execvp(args[0], args) < 0){
                     close(pfds[0]);
                     close(pfds[1]);
                     printf("exec错误");
                     exit(0);
                 }
-            }
-            else
-            {
+            }else{
                 close(pfds[0]);
                 close(pfds[1]);
                 while (wait(&status) != pid);
@@ -264,15 +242,13 @@ void  execute_input(char **argv, char *output)
         fd = open(output, O_RDONLY);
         close(0);
         dup(fd);
-        if (execvp(argv[0], argv) < 0)
-        {
+        if (execvp(argv[0], argv) < 0){
             printf("exec错误");
         }
         close(fd);
         exit(0);
     }
-    else
-    {
+    else{
         while (wait(&status) != pid);
     }
 
@@ -280,8 +256,7 @@ void  execute_input(char **argv, char *output)
 
 
 
-void execute_pipe(char **argv, char *output)
-{
+void execute_pipe(char **argv, char *output){
     int pfds[2], pf[2], flag;
     char *file;
     pid_t pid, pid2, pid3;
@@ -292,23 +267,19 @@ void execute_pipe(char **argv, char *output)
     char *args[64];
     char *argp[64];
     int fl = 0;
-    if ((pid = fork()) < 0)
-    {
+    if ((pid = fork()) < 0){
         printf("fork失败\n");
         exit(1);
-    }
-    if ((pid2 = fork()) < 0)
-    {
+    }if ((pid2 = fork()) < 0){
         printf("fork失败\n");
         exit(1);
-    }
-    if (pid == 0 && pid2 != 0)
-    {
+    }if (pid == 0 && pid2 != 0){
+
         close(1);
         dup(pfds[1]);
         close(pfds[0]);
         close(pfds[1]);
-        if (execvp(argv[0], argv) < 0)//run the command
+        if (execvp(argv[0], argv) < 0)//运行
         {
             close(pfds[0]);
             close(pfds[1]);
@@ -317,10 +288,10 @@ void execute_pipe(char **argv, char *output)
             kill(pid2, SIGUSR1);
             exit(0);
         }
-    }
-    else if (pid2 == 0 && pid != 0)
-    {
-        if (fl == 1){ exit(0); }
+    }else if (pid2 == 0 && pid != 0){
+        if (fl == 1){
+            exit(0);
+        }
         if (strstr(output, "<") > 0)
         {
             char *p = strtok_r(output, "<", &file);
@@ -331,32 +302,25 @@ void execute_pipe(char **argv, char *output)
             close(pfds[0]);
             close(pfds[1]);
             exit(0);
-        }
-        if (strstr(output, ">") > 0)
-        {
+        }if (strstr(output, ">") > 0){
             char *p = strtok_r(output, ">", &file);
             file = trim(file);
             flag = 1;
 
             parse(output, args);
             blah = 1;
-        }
-
-        else
-        {
+        }else{
             parse(output, args);
         }
         close(0);
         dup(pfds[0]);
         close(pfds[1]);
         close(pfds[0]);
-        if (blah == 1)
-        {
+        if (blah == 1){
             old_stdout = dup(1);
             FILE *fp1 = freopen(file, "w+", stdout);
         }
-        if (execvp(args[0], args) < 0)
-        {
+        if (execvp(args[0], args) < 0){
             fflush(stdout);
             printf("exec错误 %d", pid);
             kill(pid, SIGUSR1);
@@ -372,9 +336,7 @@ void execute_pipe(char **argv, char *output)
             FILE *fp2 = fdopen(old_stdout, "w");
             *stdout = *fp2;
         }
-    }
-    else
-    {
+    }else{
         close(pfds[0]);
         close(pfds[1]);
         while (wait(&status) != pid);
@@ -383,8 +345,7 @@ void execute_pipe(char **argv, char *output)
 }
 
 
-void execute_pipe2(char **argv, char **args, char **argp)
-{
+void execute_pipe2(char **argv, char **args, char **argp){
     int status;
     int i;
     int pipes[4];
@@ -408,19 +369,15 @@ void execute_pipe2(char **argv, char **args, char **argp)
             close(pipes[3]);
             exit(1);
         }
-    }
-    else
-    {
-        if (fork() == 0)
-        {
+    }else{
+        if (fork() == 0){
             dup2(pipes[0], 0);
             dup2(pipes[3], 1);
             close(pipes[0]);
             close(pipes[1]);
             close(pipes[2]);
             close(pipes[3]);
-            if (execvp(args[0], args) < 0)
-            {
+            if (execvp(args[0], args) < 0){
                 fflush(stdout);
                 printf("exec错误");
                 fflush(stdout);
@@ -430,18 +387,14 @@ void execute_pipe2(char **argv, char **args, char **argp)
                 close(pipes[3]);
                 exit(1);
             }
-        }
-        else
-        {
-            if (fork() == 0)
-            {
+        }else{
+            if (fork() == 0){
                 dup2(pipes[2], 0);
                 close(pipes[0]);
                 close(pipes[1]);
                 close(pipes[2]);
                 close(pipes[3]);
-                if (execvp(argp[0], argp) < 0)
-                {
+                if (execvp(argp[0], argp) < 0){
                     fflush(stdout);
                     printf("exec错误");
                     fflush(stdout);
@@ -464,8 +417,7 @@ void execute_pipe2(char **argv, char **args, char **argp)
 
 
 
-int  main()
-{
+int  main(){
     char line[1024];
     char *argv[64];
     char *args[64];
@@ -482,8 +434,7 @@ int  main()
         hist[i] = (char *)malloc(150);
     }
 
-    while (1)
-    {
+    while (1){
         count = 0;
         int flag = 0;
         char *word = NULL;
@@ -495,6 +446,7 @@ int  main()
         printf("$");
 
         int len = getline(&word, &size, stdin);
+        //空行
         if (*word == '\n')
             continue;
 
@@ -509,21 +461,15 @@ int  main()
         head = (head + 1) % hist_size;
         filled = filled + 1;
 
-        for (i = 0; word[i] != '\0'; i++)
-        {
-
-            if (word[i] == '>')
-            {
-
+        for (i = 0; word[i] != '\0'; i++){
+            if (word[i] == '>'){
                 char *p = strtok_r(word, ">", &file);
                 file = trim(file);
-
                 flag = 1;
                 break;
             }else if (word[i] == '<'){
                 char *p = strtok_r(word, "<", &file);
                 file = trim(file);
-
                 flag = 2;
                 break;
             }
@@ -536,7 +482,6 @@ int  main()
         if (strcmp(word, "exit") == 0){
             exit(0);
         }
-
         if (flag == 1){
             parse(word, argv);
             execute_file(argv, file);

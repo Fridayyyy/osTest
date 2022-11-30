@@ -6,5 +6,3 @@
 #include <sys/stat.h>
 #include<signal.h>
 #include <fcntl.h>
-
-#define hist_size 1024
